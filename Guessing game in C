@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+//Making a Number Guess game
+
+
+
+int main(){
+
+srand(time(0));
+
+int yourGuess;
+int random = rand() % 6;
+
+
+do{
+
+printf("Guess the number: ");
+scanf("%d", &yourGuess);
+
+
+if(random < yourGuess){
+
+    printf("The guess is actually greater than the guess \n");
+
+}else if(random > yourGuess){
+
+    printf("The guess is actually lesser than the guess \n");
+
+}else{
+
+    printf("Congratulation you have guessed it correct \n");
+}
+
+}while(random != yourGuess);
+
+
+
+return 0;
+
+}
