@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <stdlib.h>
+#include <time.h>
+
+
+//Making a Calculator in C progamming
+
+
+
+int main(){
+
+int num1;
+int num2;
+int cal;
+char operator;
+
+
+printf("Enter a number: ");
+scanf("%d", &num1);
+
+getchar();
+printf("Enter an operator (+ * / - %%): ");
+scanf("%c", &operator);
+
+
+printf("Enter a second number: ");
+scanf("%d", &num2);
+
+switch (operator)
+{
+case '+':
+    cal = num1 + num2;
+    break;
+
+case '-':
+    cal = num1 - num2;
+    break;
+
+case '*':
+    cal = num1 * num2;
+    break;
+
+case '/':
+    cal = num1 / num2;
+    break;
+
+case '%':
+    cal = num1 % num2;
+    break;
+
+default:
+printf("The operator you entered is none existence");
+    break;
+}
+
+printf("Calculator is: %d", cal);
+
+return 0;
+
+}
