@@ -1,0 +1,60 @@
+#include <stdio.h>
+
+int main() {
+    
+    int numOne;
+    int numTwo;
+    char operation;
+    int result;
+    char continueProgram;
+    
+    do {
+    printf("Enter the first number: ");
+    scanf("%d", &numOne);
+    
+    printf("Enter the second number: ");
+    scanf("%d", &numTwo);
+
+    printf("Enter an operator(+ - * / %): ");
+    scanf(" %c", &operation);
+    
+    switch (operation){
+        case '+':
+            result = numOne + numTwo;
+            break;
+        case '-':
+            result = numOne - numTwo;
+            break;
+        case '*':
+            result = numOne * numTwo;
+            break;
+        case '/':
+            
+            if (numTwo != 0){
+                result = numOne / numTwo;
+            }else{
+                printf("Error can not be divisible by 0\n");
+                continue;
+            }
+            break;
+        case '%':
+            if (numTwo != 0){
+                result = numOne % numTwo;
+            }else{
+                printf("Error can not be divisible by 0\n");
+                continue;
+            }
+            break;
+        default:
+        printf("Entered incorrect operator");
+        continue;
+    }
+    
+    printf("The result: %d\n", result);
+    
+    printf("Do you want to contine (y/n): ");
+    scanf(" %c", &continueProgram);
+    }while(continueProgram == 'y' || continueProgram == 'Y');
+
+    return 0;
+}
