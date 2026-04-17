@@ -143,7 +143,7 @@ Shop Now
 
 <div class='row'>
 <strong>Total</strong>
-<strong>R<span id='total'>0</span></strong>
+<strong>$<span id='total'>0</span></strong>
 </div>
 
 <input id='name' placeholder='Full Name'>
@@ -212,10 +212,10 @@ Shop Now
 
 /* PRODUCTS WITH TEMPLATE DATA */
 const products=[
-{id:1,name:'Lineage Threads',price:621,color:'?',size:'?',img:'Lineage Threads.jpg'},
-{id:2,name:'Minimal Riot',price:703,color:'?',size:'?',img:'Minimal Riot.jpg'},
-{id:3,name:'Ghostline Apparel',price:490,color:'?',size:'?',img:'Ghostline Apparel.jpg'},
-{id:4,name:'MonoMotion',price:1128,color:'?',size:'?',img:'MonoMotion.jpg'}
+{id:1,name:'Lineage Threads',price:37.96,color:'?',size:'?',img:'Lineage Threads.jpg'},
+{id:2,name:'Minimal Riot',price:42.97,color:'?',size:'?',img:'Minimal Riot.jpg'},
+{id:3,name:'Ghostline Apparel',price:29.95,color:'?',size:'?',img:'Ghostline Apparel.jpg'},
+{id:4,name:'MonoMotion',price:68.95,color:'?',size:'?',img:'MonoMotion.jpg'}
 ];
 
 let cart=[];
@@ -230,7 +230,7 @@ products.map(p=>`
 <div class='pad'>
 <div class='row'>
 <strong>${p.name}</strong>
-<span class='price'>R${p.price}</span>
+<span class='price'>$${p.price}</span>
 </div>
 
 <p class='muted'>Premium cotton for outsiders.</p>
@@ -258,7 +258,7 @@ renderCart();
 }
 
 /* CART UI */
-const ZAR_TO_USD = 18; // adjust anytime (e.g. 17, 19, etc.)
+
 function renderCart(){
 document.getElementById('cartCount').textContent=cart.length;
 
@@ -273,21 +273,14 @@ Color: ${i.selectedColor} | Size: ${i.selectedSize}
 </span>
 
 <span>
-R${i.price}
+$${i.price}
 <button onclick='removeItem(${n})'>✕</button>
 </span>
 </div>
 `).join('');
 
-/* TOTAL IN RAND */
-const totalZAR = cart.reduce((a,b)=>a+b.price,0);
-
-/* CONVERT TO USD */
-const totalUSD = (totalZAR / ZAR_TO_USD).toFixed(2);
-
-/* SHOW BOTH (optional but useful for PayPal) */
-document.getElementById('total').innerHTML =
-`${totalZAR} (~$${totalUSD})`;
+document.getElementById('total').textContent=
+cart.reduce((a,b)=>a+b.price,0);
 }
 
 /* REMOVE ITEM */
