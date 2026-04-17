@@ -8,8 +8,26 @@
 <style>
 :root{--bg:#0b0b0d;--card:#15151a;--text:#f5f5f5;--muted:#a0a0aa;--accent:#7c3aed}
 *{box-sizing:border-box}
+
+@media (max-width: 500px){
+.cart{
+right:0;
+left:0;
+bottom:0;
+width:100%;
+border-radius:20px 20px 0 0;
+}
+}
+
 body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#0b0b0d,#111);color:var(--text)}
 a{text-decoration:none;color:inherit}
+
+#paypal-button-container{
+max-width:100%;
+overflow:hidden;
+}
+
+
 
 header{
 position:sticky;top:0;
@@ -42,7 +60,11 @@ padding:16px 24px;border-bottom:1px solid #222;z-index:10}
 .cart{
 position:fixed;right:20px;bottom:20px;
 background:var(--card);padding:18px;border-radius:22px;
-border:1px solid #333;min-width:300px;max-width:360px}
+border:1px solid #333;min-width:300px;max-width:360px; overflow-y: auto; max-width: 90vh; max-height:90vh;}
+
+#paypal-button-container{
+min-height:300px;
+}
 
 .cart-items{max-height:240px;overflow:auto;margin:12px 0}
 .cart-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #222}
@@ -144,6 +166,8 @@ Shop Now
 
 <button class='btn' style='width:100%' onclick='checkout()'>Checkout</button>
 
+<div id="paypal-button-container"></div>
+
 <div class='notice' id='notice'>Order captured!</div>
 </div>
 
@@ -234,6 +258,7 @@ renderCart();
 }
 
 /* CART UI */
+const ZAR_TO_USD = 18; // adjust anytime (e.g. 17, 19, etc.)
 function renderCart(){
 document.getElementById('cartCount').textContent=cart.length;
 
@@ -254,8 +279,15 @@ R${i.price}
 </div>
 `).join('');
 
-document.getElementById('total').textContent=
-cart.reduce((a,b)=>a+b.price,0);
+/* TOTAL IN RAND */
+const totalZAR = cart.reduce((a,b)=>a+b.price,0);
+
+/* CONVERT TO USD */
+const totalUSD = (totalZAR / ZAR_TO_USD).toFixed(2);
+
+/* SHOW BOTH (optional but useful for PayPal) */
+document.getElementById('total').innerHTML =
+`${totalZAR} (~$${totalUSD})`;
 }
 
 /* REMOVE ITEM */
@@ -272,25 +304,73 @@ box.style.display=box.style.display==='none'?'block':'none';
 
 /* CHECKOUT */
 function checkout(){
-if(!cart.length)return alert('Cart is empty');
 
-const total=cart.reduce((a,b)=>a+b.price,0);
+if(!cart.length){
+alert("Cart is empty");
+return;
+}
 
-const name=document.getElementById('name').value;
-const email=document.getElementById('email').value;
-const address=document.getElementById('address').value;
+const name = document.getElementById('name').value.trim();
+const email = document.getElementById('email').value.trim();
+const address = document.getElementById('address').value.trim();
 
-if(!name||!email||!address)
-return alert('Fill all details');
+if(!name || !email || !address){
+alert("Fill all details first");
+return;
+}
 
-const items=cart.map(i=>
-`${i.name} (${i.selectedColor}, ${i.selectedSize})`
-).join(', ');
+const total = cart.reduce((a,b)=>a+b.price,0);
 
-alert('Redirecting to PayPal...');
+/* show PayPal button ONLY now */
+document.getElementById('paypal-button-container').innerHTML = "";
 
-window.location.href=
-`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=magnetoasis@gmail.com&item_name=${encodeURIComponent(items)}&amount=${total}&currency_code=ZAR`;
+document.getElementById('notice').style.display = "block";
+document.getElementById('notice').innerText = "Complete payment below 👇";
+
+/* prevent duplicate buttons */
+if(typeof paypal === "undefined"){
+alert("PayPal not loaded");
+return;
+}
+
+paypal.Buttons({
+
+style: {
+layout: 'vertical',
+color: 'gold',
+shape: 'rect',
+label: 'pay'
+},
+
+createOrder: function(data, actions) {
+return actions.order.create({
+purchase_units: [{
+amount: {
+value: total.toFixed(2)
+},
+description: "Drippin StickMan Order"
+}]
+});
+},
+
+onApprove: function(data, actions) {
+return actions.order.capture().then(function(details){
+
+alert("Payment successful, thanks " + details.payer.name.given_name);
+
+/* clear cart after payment */
+cart = [];
+renderCart();
+
+/* hide button again */
+document.getElementById('paypal-button-container').innerHTML = "";
+document.getElementById('notice').innerText = "Order completed ✔";
+
+});
+}
+
+}).render('#paypal-button-container');
+
 }
 
 /* INIT */
@@ -299,5 +379,6 @@ renderCart();
 
 </script>
 
+<script src="https://www.paypal.com/sdk/js?client-id=ATkaPqzBjX7vKVF5CPyg9rgWFZCiTl80ZTkEfeO-u2CpeMSTQQAjSh1Qt810CO7yS_URqfmgYxuahWQB&currency=USD"></script>
 </body>
 </html>
